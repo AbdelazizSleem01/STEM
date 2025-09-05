@@ -55,7 +55,7 @@ export default function UserDashboard() {
   };
 
   verifyUser();
-}, [router, fetchStats]);
+}, [router]);
 
 
   const fetchUserData = async () => {
