@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -10,7 +11,6 @@ import {
   FiArrowDown,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-export const dynamic = "force-dynamic";
 export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState({

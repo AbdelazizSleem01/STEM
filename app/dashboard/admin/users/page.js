@@ -1,5 +1,6 @@
 "use client";
 
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import {
   FiEdit2,
@@ -17,7 +18,6 @@ import {
   FiUnlock,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-export const dynamic = "force-dynamic";
 
 export default function UserManagementPage() {
   const router = useRouter();
