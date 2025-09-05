@@ -1,8 +1,9 @@
-import HomeClient from "@/components/HomeClient";
+// app/contact/page.js
+import ContactClient from "@/components/ContactClient";
 import { verifyAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+export default async function ContactPage() {
   let user = null;
 
   try {
@@ -34,5 +35,5 @@ export default async function Page() {
     }
   }
 
-  return <HomeClient user={user} />;
+  return <ContactClient user={user} />;
 }

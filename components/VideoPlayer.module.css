@@ -1,0 +1,15 @@
+.youtube-container {
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16/9;
+  position: relative;
+}
+
+.youtube-player iframe {
+  width: 300%;      /* يوسع الفيديو بحيث اللي فوق يتقص */
+  height: 100%;
+  margin-left: -100%; /* يظبط المركز */
+  position: absolute;
+  top: 0;
+  left: 0;
+}

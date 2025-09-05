@@ -1,8 +1,9 @@
-import HomeClient from "@/components/HomeClient";
+// app/privacy/page.js
 import { verifyAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import AboutUs from "./page";
 
-export default async function Page() {
+export default async function PrivacyPage() {
   let user = null;
 
   try {
@@ -34,5 +35,5 @@ export default async function Page() {
     }
   }
 
-  return <HomeClient user={user} />;
+  return <AboutUs user={user} />;
 }
