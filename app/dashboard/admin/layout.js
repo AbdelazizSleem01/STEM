@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { verifyAuth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import AdminNavbar from '@/components/AdminNavbar';
+export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }) {
   const auth = await verifyAuth();
