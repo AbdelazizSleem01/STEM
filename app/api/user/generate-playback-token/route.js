@@ -6,13 +6,14 @@ import User from "@/lib/models/User";
 import Course from "@/lib/models/Course";
 
 export async function POST(request) {
-    if (process.env.NEXT_PHASE === 'phase-production-build') {
-    return NextResponse.json({ 
-      token: 'dummy-token-for-build-phase',
-      expiresIn: 300,
-      message: 'Build phase token'
-    }, { status: 200 });
+  // تحقق من وجود request
+  if (!request) {
+    return NextResponse.json(
+      { error: "Request object is missing" },
+      { status: 400 }
+    );
   }
+  
   try {
     const auth = await verifyAuth(request);
     if (!auth) {

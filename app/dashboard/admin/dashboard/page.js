@@ -28,6 +28,7 @@ export default function AdminDashboard() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    // هذا الكود سينفذ فقط في المتصفح، وليس في السيرفر
     const verifyUser = async () => {
       try {
         const res = await fetch("/api/auth/verify", {
@@ -36,19 +37,21 @@ export default function AdminDashboard() {
         });
         if (!res.ok) throw new Error("Not authenticated");
         const data = await res.json();
-
-        if (!data.user || data.user.role !== "admin") {
+        if (data.user?.role !== "admin") {
           router.replace("/dashboard");
           return;
         }
-
         setAdminName(data.user.name || "Admin");
         await fetchStats();
       } catch (err) {
         router.replace("/auth/login?from=/dashboard/admin/dashboard");
       }
     };
-    verifyUser();
+    
+    // تأكد من أننا في المتصفح قبل تنفيذ الكود
+    if (typeof window !== 'undefined') {
+      verifyUser();
+    }
   }, [router]);
 
   const fetchStats = useCallback(async () => {
