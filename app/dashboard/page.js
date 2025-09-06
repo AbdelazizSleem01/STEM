@@ -17,10 +17,10 @@ import {
   FiAward,
   FiSearch,
   FiFilter,
-  FiRefreshCw
+  FiRefreshCw,
 } from "react-icons/fi";
 import Image from "next/image";
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 export default function UserDashboard() {
   const router = useRouter();
   const [availableCourses, setAvailableCourses] = useState([]);
@@ -32,31 +32,30 @@ export default function UserDashboard() {
   const isMounted = useRef(false);
 
   useEffect(() => {
-  const verifyUser = async () => {
-    try {
-      const res = await fetch("/api/auth/verify", {
-        method: "GET",
-        credentials: "include",
-      });
+    const verifyUser = async () => {
+      try {
+        const res = await fetch("/api/auth/verify", {
+          method: "GET",
+          credentials: "include",
+        });
 
-      if (!res.ok) throw new Error("Not authenticated");
+        if (!res.ok) throw new Error("Not authenticated");
 
-      const data = await res.json();
-      if (data.user?.role !== "admin") {
-        router.replace("/dashboard");
-        return;
+        const data = await res.json();
+        if (data.user?.role === "admin") {
+          router.replace("/dashboard/admin/dashboard");
+          return;
+        }
+
+        // ✅ دي اللي ناقصتك!
+        fetchUserData();
+      } catch (err) {
+        router.replace("/auth/login?from=/dashboard/user");
       }
+    };
 
-      setAdminName(data.user.name || "Admin");
-      fetchStats();
-    } catch (err) {
-      router.replace("/auth/login?from=/dashboard/admin/dashboard");
-    }
-  };
-
-  verifyUser();
-}, [router]);
-
+    verifyUser();
+  }, [router]);
 
   const fetchUserData = async () => {
     try {
@@ -171,13 +170,15 @@ export default function UserDashboard() {
   const filteredAndSortedCourses = availableCourses
     .filter((ac) => {
       if (!ac.course) return false;
-      return ac.course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             ac.course.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return (
+        ac.course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ac.course.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     })
     .sort((a, b) => {
       const progressA = getCourseProgress(a.course.id).completionRate;
       const progressB = getCourseProgress(b.course.id).completionRate;
-      
+
       switch (sortBy) {
         case "progress":
           return progressB - progressA;
@@ -265,14 +266,19 @@ export default function UserDashboard() {
                   <FiActivity className="h-6 w-6 text-indigo-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Overall Progress</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Overall Progress
+                  </p>
                   <p className="text-2xl font-bold text-gray-900">
                     {Math.round(
                       Object.values(userProgress).reduce(
-                        (sum, p) => sum + (getCourseProgress(p.courseId).completionRate || 0),
+                        (sum, p) =>
+                          sum +
+                          (getCourseProgress(p.courseId).completionRate || 0),
                         0
                       ) / Object.keys(userProgress).length
-                    )}%
+                    )}
+                    %
                   </p>
                 </div>
               </div>
@@ -284,11 +290,15 @@ export default function UserDashboard() {
                   <FiClockProgress className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Watch Time</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Watch Time
+                  </p>
                   <p className="text-2xl font-bold text-gray-900">
                     {formatDuration(
                       Object.values(userProgress).reduce(
-                        (sum, p) => sum + (getCourseProgress(p.courseId).totalWatchTime || 0),
+                        (sum, p) =>
+                          sum +
+                          (getCourseProgress(p.courseId).totalWatchTime || 0),
                         0
                       )
                     )}
@@ -303,8 +313,12 @@ export default function UserDashboard() {
                   <FiBook className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Enrolled Courses</p>
-                  <p className="text-2xl font-bold text-gray-900">{availableCourses.length}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Enrolled Courses
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {availableCourses.length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -317,7 +331,12 @@ export default function UserDashboard() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Completed</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {Object.values(userProgress).filter(p => getCourseProgress(p.courseId).completionRate === 100).length}
+                    {
+                      Object.values(userProgress).filter(
+                        (p) =>
+                          getCourseProgress(p.courseId).completionRate === 100
+                      ).length
+                    }
                   </p>
                 </div>
               </div>
@@ -374,11 +393,10 @@ export default function UserDashboard() {
                   className="flex flex-col bg-white overflow-hidden shadow-lg rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full"
                 >
                   <div className="relative">
-                    <Image
+                    <img
                       src={ac.course.coverImage || "/placeholder-course.jpg"}
                       alt={ac.course.title}
                       className="w-full h-48 object-cover"
-                      fill
                     />
                     <div className="absolute top-4 left-4">
                       <span
@@ -409,7 +427,7 @@ export default function UserDashboard() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col flex-1 p-6">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
                       {ac.course.title}
@@ -417,7 +435,7 @@ export default function UserDashboard() {
                     <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                       {ac.course.description}
                     </p>
-                    
+
                     <div className="flex items-center text-sm text-gray-500 mb-4">
                       <div className="flex items-center mr-4">
                         <FiBook className="mr-1 h-4 w-4" />
@@ -432,8 +450,12 @@ export default function UserDashboard() {
                     {/* Progress Stats */}
                     <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-gray-700">Progress</span>
-                        <span className="text-sm font-bold text-indigo-600">{progress.completionRate}%</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          Progress
+                        </span>
+                        <span className="text-sm font-bold text-indigo-600">
+                          {progress.completionRate}%
+                        </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
@@ -452,7 +474,9 @@ export default function UserDashboard() {
                       onClick={() => handleViewCourse(ac.course.id)}
                       className="mt-auto w-full inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
                     >
-                      {progress.completionRate > 0 ? 'Continue Learning' : 'Start Learning'}
+                      {progress.completionRate > 0
+                        ? "Continue Learning"
+                        : "Start Learning"}
                       <FiArrowRight className="ml-2 h-4 w-4" />
                     </button>
                   </div>
@@ -464,23 +488,22 @@ export default function UserDashboard() {
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-200">
             <FiBook className="mx-auto h-16 w-16 text-gray-400" />
             <h3 className="mt-4 text-lg font-medium text-gray-900">
-              {searchTerm ? 'No courses found' : 'No available courses'}
+              {searchTerm ? "No courses found" : "No available courses"}
             </h3>
             <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-              {searchTerm 
-                ? 'Try adjusting your search terms or filters'
-                : 'You don\'t have access to any courses yet. Please contact your administrator to get enrolled in courses.'
-              }
+              {searchTerm
+                ? "Try adjusting your search terms or filters"
+                : "You don't have access to any courses yet. Please contact your administrator to get enrolled in courses."}
             </p>
             <div className="mt-6">
               <button
                 onClick={() => {
-                  setSearchTerm('');
-                  setSortBy('progress');
+                  setSearchTerm("");
+                  setSortBy("progress");
                 }}
                 className="inline-flex items-center rounded-xl border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                {searchTerm ? 'Clear Search' : 'Refresh Courses'}
+                {searchTerm ? "Clear Search" : "Refresh Courses"}
               </button>
             </div>
           </div>

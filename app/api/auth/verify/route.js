@@ -1,15 +1,16 @@
+// app/api/auth/verify/route.js
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 
 export async function GET(request) {
   // ✅ تجنب التنفيذ في مرحلة البناء
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
+  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_RUNTIME) {
     return NextResponse.json({
       success: true,
       user: {
         id: 'build-user-id',
         email: 'build@example.com',
-        role: 'admin', // مهم جداً أن تكون 'admin' لأن الصفحة تتطلب صلاحية المدير
+        role: 'admin',
         name: 'Build Admin'
       }
     });
@@ -24,7 +25,7 @@ export async function GET(request) {
         id: payload.userId,
         email: payload.email,
         role: payload.role,
-        name: payload.name || 'User' // أضف اسم المستخدم إذا كان متاحاً
+        name: payload.name || 'User'
       }
     });
   } catch (error) {
@@ -33,4 +34,9 @@ export async function GET(request) {
       { status: 401 }
     );
   }
+}
+
+// ✅ مهم: لو بعت POST بالغلط — حوله لـ GET
+export async function POST(request) {
+  return GET(request);
 }

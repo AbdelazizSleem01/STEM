@@ -32,7 +32,6 @@ export default function HomeClient({ user }) {
               src="/placeholder-image.png"
               alt="STEM Foundation Learning"
               fill
-              objectFit="cover"
               className="rounded-lg transform hover:scale-105 transition duration-700"
             />
           </div>
