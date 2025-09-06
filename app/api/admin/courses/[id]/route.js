@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import Course from "@/lib/models/Course";
+import User from "@/lib/models/User";
 
 export async function PUT(request, context) {
   try {

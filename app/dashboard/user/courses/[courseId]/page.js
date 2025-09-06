@@ -540,7 +540,7 @@ export default function CoursePage() {
             ) : (
               <div className="space-y-4">
                 {course.course.topics?.map((topic, topicIndex) => {
-                  const isTopicAvailable =
+                  const isTopicUnlocked =
                     course.allTopicsAvailable ||
                     course.availableTopics.includes(topic.id);
 
@@ -553,7 +553,7 @@ export default function CoursePage() {
                         <h4 className="text-sm font-medium text-gray-900">
                           {topicIndex + 1}. {topic.title}
                         </h4>
-                        {isTopicAvailable ? (
+                        {isTopicUnlocked ? (
                           <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                             <FiUnlock className="mr-1 h-3 w-3" />
                             Available
@@ -566,10 +566,10 @@ export default function CoursePage() {
                         )}
                       </div>
 
-                      {isTopicAvailable && topic.videos?.length > 0 && (
+                      {topic.videos?.length > 0 && (
                         <ul className="space-y-2">
                           {topic.videos.map((video, videoIndex) => {
-                            const isVideoAccessible = isVideoAvailable(
+                            const isVideoAccessible = isTopicUnlocked && isVideoAvailable(
                               course,
                               topic.id,
                               video.id
@@ -620,16 +620,9 @@ export default function CoursePage() {
                         </ul>
                       )}
 
-                      {isTopicAvailable &&
-                        (!topic.videos || topic.videos.length === 0) && (
-                          <p className="text-sm text-gray-500">
-                            No videos in this topic
-                          </p>
-                        )}
-
-                      {!isTopicAvailable && (
+                      {(!topic.videos || topic.videos.length === 0) && (
                         <p className="text-sm text-gray-500">
-                          Complete previous topics to unlock
+                          No videos in this topic
                         </p>
                       )}
                     </div>
